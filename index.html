@@ -1,0 +1,125 @@
+<html>
+  <style type="text/css">
+    .flex-container {
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      -webkit-flex-wrap: wrap;
+      flex-wrap: wrap;
+      background-color: #aaa;
+    }
+  </style>
+  <body>
+    <form>
+      <select id="selectItems"></select>
+      <button type="submit">Show</button>
+    </form>
+    <div id="test">
+    </div>
+  </body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+  $(function() {
+
+    // 750 x 1334 = iphone 6. Edit values
+    var SCREEN_WIDTH = 180;
+    var SCREEN_HEIGHT = 320;
+    
+    var numItems;
+
+
+    var selectValues = [];
+    for (var i=5;i<100;i++) {
+      selectValues.push('<option>'+ i +'</option>')
+    }
+    $('#selectItems').html(selectValues.join(''));
+
+    $('form').on('submit', function(e) {
+      e.preventDefault();
+      clearDOM();
+      numItems = $('select#selectItems option:selected').val();
+      detectModulo(numItems);
+    });
+
+    function detectModulo(n) {
+      var pattern;
+      if (n % 3 == 0) {
+        pattern = [{func:makeBoxA}, {func:makeBoxB}];
+      } else if (n%3 == 1) {
+        pattern = [{func:makeBoxA}, {func:makeBoxC}, {func:makeBoxB}, {func:makeBoxC}];
+      } else if (n%3 == 2) {
+        pattern = [{func:makeBoxA}, {func:makeBoxC}, {func:makeBoxB}];
+      }
+      usePattern(pattern, n);
+    }
+
+    function usePattern(pattern, n) {
+      var i = 0;
+      if (n == 7) {
+        // 7 does not match the pattern >:(
+        makeBoxC();
+        makeBoxA();
+        makeBoxC();
+      } else {
+        for (var j=0;i<n;j++) {
+          i += pattern[j].func();
+          if (j == pattern.length-1) {
+            j = -1;
+          }
+        }
+      }
+    }
+
+    function getImage(w, h) {
+      var $div = $('<div style="width:'+w+'px;height:'+h+'px;"><img src=http://placekitten.com/'+w+'/'+h+'></div>');
+      return $div;
+    }
+
+    function makeBoxA(styleOveride) {
+      var container = $('<div class="flex-container" style="width:'+SCREEN_WIDTH+'px;height:'+Math.floor(SCREEN_HEIGHT*2/3)+'px;'+styleOveride+'"></div>')
+      $('#test').append(container);
+
+      for (var i = 0; i < 3; i++) {
+        var div, imgWidth, imgHeight;
+        if (!i%3) {
+          imgWidth = Math.floor(SCREEN_WIDTH*2/3);
+          imgHeight = Math.floor(SCREEN_HEIGHT*2/3);
+        } else if (i%3) {
+          imgWidth = Math.floor(SCREEN_WIDTH*1/3);
+          imgHeight = Math.floor(SCREEN_HEIGHT*1/3);
+        }
+        div = getImage(imgWidth, imgHeight);
+        container.append(div);
+      }
+      return 3;
+    }
+
+    function makeBoxB() {
+      makeBoxA('flex-wrap: wrap-reverse;');
+      return 3;
+    }
+
+    function makeBoxC() {
+      var container = $('<div class="flex-container" style="width:'+SCREEN_WIDTH+'px;height: '+ Math.floor(SCREEN_HEIGHT*.5) +'px;"></div>')
+      $('#test').append(container);
+
+      for (var i = 0; i < 2; i++) {
+        var div, imgWidth, imgHeight;
+        imgWidth = Math.floor(SCREEN_WIDTH*.5);
+        imgHeight = Math.floor(SCREEN_HEIGHT*.5);
+        div = getImage(imgWidth, imgHeight);
+        container.append(div);
+      }
+      return 2;
+    }
+
+    function clearDOM() {
+      $('#test').html('');
+    }
+  });
+
+</script>
