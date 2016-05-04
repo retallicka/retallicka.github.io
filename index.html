@@ -75,7 +75,7 @@
     }
 
     function getImage(w, h) {
-      var $div = $('<div style="width:'+w+'px;height:'+h+'px;"><img src=http://placekitten.com/'+w+'/'+h+'></div>');
+      var $div = $('<div style="width:'+w+'px;height:'+h+'px;"><img src=http://loremflickr.com/'+w+'/'+h+'?'+ Math.floor(Math.random()*1000) +'></div>');
       return $div;
     }
 
